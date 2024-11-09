@@ -53,6 +53,10 @@
 #include "wayland/gdkprivate-wayland.h"
 #endif
 
+#ifdef GDK_WINDOWING_DRM
+#include "drm/gdkprivate-drm.h"
+#endif
+
 /**
  * GdkDisplayManager:
  *
@@ -264,6 +268,9 @@ static GdkBackend gdk_backends[] = {
 #endif
 #ifdef GDK_WINDOWING_WAYLAND
   { "wayland",  _gdk_wayland_display_open },
+#endif
+#ifdef GDK_WINDOWING_DRM
+  { "drm",      _gdk_drm_display_open },
 #endif
 #ifdef GDK_WINDOWING_X11
   { "x11",      gdk_x11_display_open },

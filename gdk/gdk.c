@@ -19,7 +19,7 @@
  * Modified by the GTK+ Team and others 1997-2000.  See the AUTHORS
  * file for a list of people on the GTK+ Team.  See the ChangeLog
  * files for a list of changes.  These files are distributed with
- * GTK+ at ftp://ftp.gtk.org/pub/gtk/. 
+ * GTK+ at ftp://ftp.gtk.org/pub/gtk/.
  */
 
 #include "config.h"
@@ -86,6 +86,15 @@ G_STATIC_ASSERT (G_ALIGNOF (gsize) == G_ALIGNOF (void *));
  * is supported.
  *
  * Use this macro to guard code that is specific to the Wayland backend.
+ */
+
+/**
+ * GDK_WINDOWING_DRM:
+ *
+ * The `GDK_WINDOWING_DRM` macro is defined if the DRM backend
+ * is supported.
+ *
+ * Use this macro to guard code that is specific to the DRM backend.
  */
 
 /**

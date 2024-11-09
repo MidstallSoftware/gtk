@@ -67,6 +67,10 @@ MacOS backend
 -------------
 Anders Carlsson
 
+DRM backend
+-----------
+Tristan Ross
+
 GtkInspector (originally gtkparasite)
 -------------------------------------
 Christian Hammond

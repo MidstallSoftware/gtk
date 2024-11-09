@@ -110,6 +110,7 @@ broadway_enabled = get_option('broadway-backend')
 macos_enabled    = get_option('macos-backend')
 win32_enabled    = get_option('win32-backend')
 vulkan_enabled   = get_option('vulkan')
+drm_enabled      = get_option('drm-backend')
 
 os_unix   = false
 os_linux  = false
@@ -146,6 +147,7 @@ os_unix = not os_win32
 if os_darwin
   wayland_enabled = false
   vulkan_enabled = false
+  drm_enabled = false
 else
   macos_enabled = false
 endif
@@ -153,6 +155,7 @@ endif
 if os_win32
   wayland_enabled = false
   x11_enabled = false
+  drm_enabled = false
 else
   win32_enabled = false
 endif
@@ -287,7 +290,7 @@ if cc.get_id() == 'msvc'
     '/wd4116', # breaks G_ALIGNOF()
     '/wd4090', # VC2017 is way too aggressive with this
   ]
-  
+
   msvc_supported_cflags = cc.get_supported_arguments(test_cflags)
   if debug
     required_cflags += required_debug_cflags
@@ -360,7 +363,7 @@ elif cc.get_id() == 'gcc' or cc.get_id() == 'clang'
     'write-strings',
   ]
 
-  
+
   if get_option('buildtype').startswith('debug')
     foreach warning: extra_warnings
       test_cflags += '-Werror=@0@'.format(warning)
@@ -526,6 +529,16 @@ cdata.set('HAVE_PANGOFT', pangoft_dep.found())
 if win32_enabled
   cdata.set('HAVE_PANGOWIN32', pangowin32_dep.found())
   cdata.set('CONST_VTABLE', 1)
+endif
+
+drm_pkgs = []
+if drm_enabled
+  libdrm = dependency('libdrm', version: '>= 2.4.123')
+  libgbm = dependency('gbm', version: '>= 24.2.0')
+  libudev = dependency('libudev', version: '>= 256')
+  libseat = dependency('libseat', required: false)
+  libdisplay_info = dependency('libdisplay-info',
+    fallback: 'display-info')
 endif
 
 wayland_pkgs = []
@@ -890,7 +903,7 @@ gsk_packages = [ 'graphene-gobject-1.0 @0@'.format(graphene_req) ]
 gtk_packages = [ 'gio-2.0 @0@'.format(glib_req) ]
 
 enabled_backends = []
-foreach backend: [ 'broadway', 'macos', 'wayland', 'win32', 'x11', ]
+foreach backend: [ 'broadway', 'macos', 'wayland', 'drm', 'win32', 'x11', ]
   if get_variable('@0@_enabled'.format(backend))
     enabled_backends += backend
   endif

@@ -124,4 +124,46 @@ if get_option('documentation')
       suite: ['docs'],
     )
   endif
+
+  if drm_enabled
+    gdk4drm_toml = configure_file(
+      input: 'gdk4-drm.toml.in',
+      output: 'gdk4-drm.toml',
+      configuration: toml_conf,
+      install: true,
+      install_dir: docs_dir / 'gdk4-drm',
+    )
+
+    custom_target('gdk4-drm-doc',
+      input: [ gdk4drm_toml, gdk_drm_gir[0] ],
+      output: 'gdk4-drm',
+      command: [
+        gidocgen,
+        'generate',
+        gidocgen_common_args,
+        '--add-include-path=@0@'.format(meson.current_build_dir() / '../../../gtk'),
+        '--config=@INPUT0@',
+        '--output-dir=@OUTPUT@',
+        '--content-dir=@0@'.format(meson.current_source_dir()),
+        '@INPUT1@',
+      ],
+      depends: [ gdk_gir[0] ],
+      depend_files: [ ],
+      build_by_default: true,
+      install: true,
+      install_dir: docs_dir,
+    )
+
+    test('doc-check-gdk-drm',
+      gidocgen,
+      args: [
+        'check',
+        '--config', gdk4drm_toml,
+        '--add-include-path=@0@'.format(meson.current_build_dir() / '../../../gtk'),
+        gdk_drm_gir[0],
+      ],
+      depends: gdk_drm_gir[0],
+      suite: ['docs'],
+    )
+  endif
 endif
